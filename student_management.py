@@ -48,13 +48,13 @@ def delete_student():
 def main_menu():
     while True:
         print("\nStudent Management System")
-        print("1. Add Student")
-        print("2. View Students")
-        print("3. Update Student")
-        print("4. Delete Student")
+        print("1. Lägg till en student")
+        print("2. Lista på alla studenter")
+        print("3. Uppdatera lista på studenter")
+        print("4. Radera Student")
         print("5. Exit")
 
-        choice = input("Enter your choice: ")
+        choice = input("välj ett alternativ: ")
 
         if choice == "1":
             add_student()
@@ -65,10 +65,10 @@ def main_menu():
         elif choice == "4":
             delete_student()
         elif choice == "5":
-            print("Exiting program. Goodbye!")
+            print("Avslutar programmet.")
             break
         else:
-            print("Invalid choice. Please try again.")
+            print("Fel inmatning. Välj ett val på nytt.")
 
 # Starta programmet
 if __name__ == "__main__":
