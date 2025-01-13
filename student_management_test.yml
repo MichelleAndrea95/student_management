@@ -3,7 +3,7 @@ from student_management import Student
 
 class TestStudentManagement(unittest.TestCase):
     def setUp(self):
-        self.student = Student(1, "Test Student", 20, "VG", ["Math", "Science"])
+        self.student = Student(1, "Michelle Zenkelt", 29, "VG", ["programmering"])
 
     def test_student_creation(self):
         self.assertEqual(self.student.id, 1)
