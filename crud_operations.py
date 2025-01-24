@@ -10,6 +10,7 @@ def add_student(id, name, age, grade, subjects):
 
 
 def view_students():
+    print(students)
     if not students:  
         print("Det finns inga studenter i systemet.")
         return
@@ -63,16 +64,14 @@ def load_students_from_file(file="students.json"):
     students = []
     try:
         with open(file, "r") as f:  
-            data = json.load(f)  
+            data= json.load(f)  
             students = [Student.from_dict(student) for student in data]
     except (FileNotFoundError, json.JSONDecodeError):
         print(f"Filen {file} kunde inte läsas. Skapar en tom lista.")
-    return students
+    
 
 
-import json
-
-def save_and_quit(students, file_path="students.json"):
+def save_and_quit(file_path="students.json"):
     try:
       
         with open(file_path, "w", encoding="utf-8") as f:

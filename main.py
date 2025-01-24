@@ -4,8 +4,8 @@ from crud_operations import add_student,update_name,update_age, update_grade,upd
 
 def main_menu():
     file_path = "students.json"
-    students = load_students_from_file(file_path)  # Läs in studenter vid start
-    students=[]
+    load_students_from_file(file_path)  
+
     while True:
         print("\nStudent Management System")
         print("1. Lägg till student")
@@ -85,7 +85,7 @@ def main_menu():
 
                 print(f"ID {id} är raderad")
         elif choice == "5":
-            save_and_quit(students, file_path="students.json")
+            save_and_quit( file_path="students.json")
             break
         else:
             print("Ogiltigt val.")
