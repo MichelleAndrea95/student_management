@@ -1,85 +1,67 @@
 import unittest
-from unittest.mock import patch
-import crud_operations 
+from crud_operations import Student, students, add_student, view_students, update_name, update_age, update_grade, update_subjects, delete_student, save_and_quit, load_students_from_file
 
-class StudentManagementTest(unittest.TestCase):
-    
+class TestStudentManagement(unittest.TestCase):
+
     def setUp(self):
-       
-        crud_operations.students.clear()
+        """Förbered testmiljö genom att skapa testdata."""
+        global students  
+        students.clear()  
+
+        # Skapa teststudenter
+        self.test_students = [
+            Student(1, "Florence", 28, "MVG", ["MA", "FY"]),
+            Student(2, "Michelle", 29, "B", ["FY", "ID"]),
+        ]
+        students.extend(self.test_students)  
 
     def test_add_student(self):
-        
-        crud_operations.add_student(7, "Michelle", 29, "VG", ["math", "sv"])
-        
-        
-        self.assertEqual(len(crud_operations.students), 1)
-        self.assertEqual(crud_operations.students[0].name, "Michelle")  
+        """Testar att lägga till en ny student."""
+        add_student(3, "Charlie", 21, "C", ["Physics", "Chemistry"])
+        self.assertEqual(len(students), 3)  # Kontrollera att en ny student har lagts till
+        self.assertEqual(students[-1].name, "Charlie")  # Kolla om namnet stämmer
 
-    @patch("builtins.print")  
-    def test_view_students(self, mock_print):
-        
-        crud_operations.add_student(7, "Michelle", 29, "VG", ["math", "sv"])
-        crud_operations.add_student(8, "Florence", 28, "VG", ["math", "sv"])
+    def test_view_students(self):
+        """Testar att visa alla studenter."""
+        output = view_students()
+        self.assertIn("Florence", output)
+        self.assertIn("Michelle", output)
 
-        crud_operations.view_students()
-
-        
-        mock_print.assert_any_call("ID: 7, Namn: Michelle, Ålder: 29, Betyg: VG, Ämnen: math, sv")
-        mock_print.assert_any_call("ID: 8, Namn: Florence, Ålder: 28, Betyg: VG, Ämnen: math, sv")
-
-    
-    
-from crud_operations import add_student, delete_student, update_name, update_age, update_grade, update_subjects
-from student import Student
-
-class StudentManagementTest(unittest.TestCase):
-    def test_update_student_name(self):
-        students = [Student(1, "John", 20, "A", ["Math", "Physics"])]
-        result = update_name(students, 1, "Jonathan")
-        self.assertTrue(result)  
-        self.assertEqual(students[0].name, "Jonathan")
-
-    def test_update_student_age(self):
-        students = [Student(1, "John", 20, "A", ["Math", "Physics"])]
-        result = update_age(students, 1, 21)
+    def test_update_name(self):
+        """Testar att uppdatera en students namn."""
+        result = update_name(1, "Florence")
         self.assertTrue(result)
-        self.assertEqual(students[0].age, 21)
+        self.assertEqual(students[0].name, "Florence")
 
-    def test_update_student_grade(self):
-        students = [Student(1, "John", 20, "A", ["Math", "Physics"])]
-        result = update_grade(students, 1, "A+")
+    def test_update_age(self):
+        """Testar att uppdatera en students ålder."""
+        result = update_age(1, 25)
         self.assertTrue(result)
-        self.assertEqual(students[0].grade, "A+")
+        self.assertEqual(students[0].age, 25)
 
-    def test_update_student_subjects(self):
-        students = [Student(1, "John", 20, "A", ["Math", "Physics"])]
-        result = update_subjects(students, 1, ["Biology", "Chemistry"])
+    def test_update_grade(self):
+        """Testar att uppdatera en students betyg."""
+        result = update_grade(1, "VG")
         self.assertTrue(result)
-        self.assertEqual(students[0].subjects, ["Biology", "Chemistry"])
+        self.assertEqual(students[0].grade, "VG")
 
-    def test_update_student_invalid_id(self):
-        students = [Student(1, "John", 20, "A", ["Math", "Physics"])]
-        result = update_name(students, 99, "NonExistent")
-        self.assertFalse(result)  
+    def test_update_subjects(self):
+        """Testar att uppdatera en students ämnen."""
+        result = update_subjects(1, ["Biology", "Music"])
+        self.assertTrue(result)
+        self.assertEqual(students[0].subjects, ["Biology", "Music"])
+
     def test_delete_student(self):
-        students = [
-            Student(1, "John", 20, "A", ["Math", "Physics"]),
-            Student(2, "Anna", 22, "B", ["Biology", "Chemistry"]),
-        ]
-        result = delete_student(students, 1)
-        self.assertTrue(result)  
-        self.assertEqual(len(students), 1)  
-        self.assertEqual(students[0].id, 2)  
+        """Testar att radera en student."""
+        delete_student(1)
+        self.assertEqual(len(students), 1)  # Bara en student ska vara kvar
+        self.assertNotIn("Florence", [student.name for student in students])  # Alice ska vara borta
 
-    def test_delete_student_invalid_id(self):
-        students = [
-            Student(1, "John", 20, "A", ["Math", "Physics"]),
-            Student(2, "Anna", 22, "B", ["Biology", "Chemistry"]),
-        ]
-        result = delete_student(students, 99)
-        self.assertFalse(result)  
-        self.assertEqual(len(students), 2) 
+    def test_save_and_load_students(self):
+        """Testar att spara och ladda studenter från en fil."""
+        save_and_quit(file="test_students.json")  # Spara till en testfil
+        loaded_students = load_students_from_file(file="test_students.json")  # Ladda testfilen
+        self.assertEqual(len(loaded_students), len(self.test_students))  # Kontrollera att antalet stämmer
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,94 +1,92 @@
 # Meny för att interagera med användaren
-from crud_operations import add_student,update_name,update_age, update_grade,update_subjects,view_students,delete_student,load_students_from_file,save_and_quit
+from crud_operations import add_student,update_student_info, update_age, update_grade, update_name, update_subjects,view_students,delete_student,load_students_from_file,save_and_quit
    
-
-def main_menu():
-    file_path = "students.json"
-    load_students_from_file(file_path)  
+def main_menu():      
+    global students 
+    students= load_students_from_file()
 
     while True:
         print("\nStudent Management System")
         print("1. Lägg till student")
         print("2. Lista på alla studenter")
-        print("3. Uppdatera lista på studenter")
-        print("4. Radera Student")
+        print("3. Uppdatera studentinformation")
+        print("4. Radera student")
         print("5. Stäng ner och spara data")
-        choice = input("välj ett alternativ: ")
+        choice = input("Välj ett alternativ: ")
 
-        if (choice == "1"):
-            id = int(input("Välj ett id för student\n"))
-            name = input("Välj ett namn för student\n")
-            age = int(input("Välj en ålder för student\n"))
-            grade = input("Välj ett betyg för student\n")
-            subjects = input("Välj kommaseparerade ämnen för student\n")
-            subjects = subjects.split(",")
+        if choice == "1":
+            # Lägg till student
+            id = int(input("Välj ett id för student: "))
+            name = input("Välj ett namn för student: ")
+            age = int(input("Välj en ålder för student: "))
+            grade = input("Välj ett betyg för student: ")
+            subjects = input("Välj kommaseparerade ämnen för student: ").split(",")
             add_student(id, name, age, grade, subjects)
+            save_and_quit(file="students.json")
 
-        elif (choice == "2"):
-            view_students()
-        
-        elif (choice == "3"):
-                
-                print("\nStudent Management System")
-                print("1. Visa alla studenter")
-                print("2. Uppdatera namn på student")
-                print("3. Uppdatera ålder på student")
-                print("4. Uppdatera betyg på student")
-                print("5. Uppdatera ämnen på student")
-                print("6. Avsluta")
-                choice = input("Välj ett alternativ (1-6): ")
+        elif choice == "2":
+            print(view_students())  # Skriv ut resultatet av view_students
+            
+        elif choice == "3":
+            student_id = int(input("Ange studentens ID att uppdatera: "))
+            update_student_info(student_id)  # Se till att du skickar student_id
+            save_and_quit(file="students.json")  # Spara efter uppdatering
+            
+        elif choice == "4":
+            # Radera student
+            student_id = int(input("Ange ID för den student du vill ta bort: "))
+            students = delete_student(student_id)
+            save_and_quit(file= "students.json")
 
-                if choice == '1':
-            # Visa alla studenter
-                        for student in students:
-                         print(f"{student.id}: {student.name}, {student.age} år, {student.grade}, Ämnen: {', '.join(student.subjects)}")
-            # Visa alla studenter 
-                elif choice == '2':
-            # Uppdatera studentens namn
-                    student_id = int(input("Ange studentens ID: "))
-                    new_name = input("Ange det nya namnet: ")
-                    update_name(student_id, new_name)
-                elif choice == '3':
-            # Uppdatera studentens ålder
-                    student_id = int(input("Ange studentens ID: "))
-                    new_age = int(input("Ange den nya åldern: "))
-                    update_age(student_id, new_age)
-        
-                elif choice == '4':
-            # Uppdatera studentens betyg
-                    student_id = int(input("Ange studentens ID: "))
-                    new_grade = input("Ange det nya betyget: ")
-                    update_grade(student_id, new_grade)
-        
-                elif choice == '5':
-            # Uppdatera studentens ämnen
-                    student_id = int(input("Ange studentens ID: "))
-                    new_subjects = input("Ange de nya ämnena, separerade med kommatecken: ").split(",")
-                    update_subjects(student_id, new_subjects)
-        
-                elif choice == '6':
-            # Avsluta programmet
-                    print("Avslutar programmet.")
-                    break
-        
-                else:
-                    print("Ogiltigt val. Försök igen.")
-
-        elif (choice == "4"):
-                
-                students= delete_student(students)
-                    
-                
-                del_student = int(input("Ange ID för den student du vill ta bort: "))
-
-                students = [s for s in students if s["id"] != del_student]
-
-                print(f"ID {id} är raderad")
         elif choice == "5":
-            save_and_quit( file_path="students.json")
+            save_and_quit(file="students.json")
             break
+
         else:
             print("Ogiltigt val.")
+
+def update_student_info(student_id):
+      
+        print("Vilken information vill du uppdatera?")
+        print("1. Namn")
+        print("2. Ålder")
+        print("3. Betyg")
+        print("4. Ämnen")
+   
+
+        update_choice = input("Välj ett alternativ (1-4): ")
+
+        if update_choice == '1':
+            new_name = input("Ange det nya namnet: ")
+            if update_name(student_id, new_name):
+                print("Studentens namn har uppdaterats.")
+            else:
+                print("Ingen student hittades med det ID:t.")
+    
+        elif update_choice == '2':
+            new_age = int(input("Ange den nya åldern: "))
+            if update_age(student_id, new_age):
+                print("Studentens ålder har uppdaterats.")
+            else:
+                print("Ingen student hittades med det ID:t.")
+
+        elif update_choice == '3':
+            new_grade = input("Ange det nya betyget: ")
+            if update_grade(student_id, new_grade):
+                print("Studentens betyg har uppdaterats.")
+            else:
+                print("Ingen student hittades med det ID:t.")
+
+        elif update_choice == '4':
+            new_subjects = input("Ange de nya ämnena, separerade med kommatecken: ").split(",")
+            if update_subjects(student_id, new_subjects):
+                print("Studentens ämnen har uppdaterats.")
+            else:
+                print("Ingen student hittades med det ID:t.")
+    
+        else:
+            print("Ogiltigt val.")
+
     
 if __name__ == "__main__":
     main_menu()
